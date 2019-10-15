@@ -114,7 +114,7 @@ Sample schema for above data set:
 
 ## Resolvers
 
-Resolvers are functions that include the logic for retriving data. Every field of schema should be backed by a resolver function and that function name should be matched the schema's field name in a non-case-sensitive way.
+Resolvers are functions that include the logic for fetching data. Every field of schema should be backed by a resolver function and that function name should be matched the schema's field name in a non-case-sensitive way.
 
 Sample resolvers:
 
@@ -183,7 +183,7 @@ Also,rest of the resolver functions(sub resolver functions) will be executed acc
             };
 
 
-Main.bal
+## Main.bal
 
 This is the main class of client. First, client should import the graphql-ballerina library.Set the schema and resolver using ParseSchema() function.Then, by using Execute() function which returns server response, client can send a query to the server. (***ParseSchema*** and ***Execute*** functions are provided by the graphql-ballerina library.)
 
