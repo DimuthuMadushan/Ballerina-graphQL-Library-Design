@@ -44,8 +44,17 @@ We use following example to describe how to create a schema and resolvers to acc
     type Resolver record{
             function (GetEmployeeResolverParams) returns employee|error getEmployee;
         };
-
-    Resolver resolver = {
+        
+    type EmployeeResolver record{
+            function (employee) returns string Id;
+            function (employee) returns string Name;
+            function (employee) returns string Age;
+            function (employee) returns string Email;
+        
+        };
+        
+    type ResolverFunctions object{
+        Resolver resolver = {
             getEmployee:function(GetEmployeeResolverParams rp) returns employee|error{
                     json tempEmp =  empMap[rp.ID];
                     employee|error emp = employee.constructFrom(tempEmp);
@@ -56,17 +65,7 @@ We use following example to describe how to create a schema and resolvers to acc
                 }
         };
 
-
-
-    type EmployeeResolver record{
-            function (employee) returns string Id;
-            function (employee) returns string Name;
-            function (employee) returns string Age;
-            function (employee) returns string Email;
-        
-        };
-
-    EmployeeResolver employeeResolver = {
+        EmployeeResolver employeeResolver = {
         
             Id:function(employee emp) returns string {
                             return emp.ID;
@@ -85,6 +84,9 @@ We use following example to describe how to create a schema and resolvers to acc
                         }
 
         };
+    };
+
+    
 
  
 
@@ -114,7 +116,7 @@ Sample schema for above data set:
 
 ## Resolvers
 
-Resolvers are functions that include the logic for fetching data. Every field of schema should be backed by a resolver function and that function name should be matched the schema's field name in a non-case-sensitive way.
+Resolvers are functions that include the logic for fetching data. In here resolver functions are defined inside a **ResolverFunctions** type object. Also every field of schema should be backed by a resolver function and that function name should be matched the schema's field name in a non-case-sensitive way. 
 
 Sample resolvers:
 
@@ -185,11 +187,13 @@ Also,rest of the resolver functions(sub resolver functions) will be executed acc
 
 ## Main.bal
 
-This is the main class of client. First, client should import the graphql-ballerina library.Set the schema and resolver using ParseSchema() function.Then, by using Execute() function which returns server response, client can send a query to the server. (***ParseSchema*** and ***Execute*** functions are provided by the graphql-ballerina library.)
+This is the main class of client. First, client should import the graphql-ballerina library.Set the schema and resolver using ParseSchema() function.Then, by using Execute() function which returns server response, client can send a query to the server. (***ParseSchema***, ***Execute*** functions and abstract object type ***ResolverFunctions*** are provided by the graphql-ballerina library.)
 
     import wso2/graphql;
 
     public function main() {
+        
+        graphql:ResolverFunctions resolverFunctions = new ResolverFunctions();
 
         json requestQuery = {
                     "query":"Query{getEmployee(id:$ID){ name, age,email}}",
@@ -197,7 +201,7 @@ This is the main class of client. First, client should import the graphql-baller
                     "variables":"{'ID':'1'}"
                 };
 
-        graphql:ParseSchema(Schema,resolver);
+        graphql:ParseSchema(Schema,resolverFunctions);
         
         json|error response = graphql:Execute(requestQuery);
 
